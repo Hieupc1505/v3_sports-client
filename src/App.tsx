@@ -8,10 +8,7 @@ import { CssBaseline } from "@mui/material";
 import { publicRouters } from "./routers";
 import Providers from "~/api/provider";
 import Header from "./components/Headers";
-console.log(import.meta.env); // "123"
 function App() {
-    // const [count, setCount] = useState(0);
-
     return (
         <CssVarsProvider theme={theme}>
             <CssBaseline />
