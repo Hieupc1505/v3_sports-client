@@ -98,7 +98,6 @@ function MatchItem({ match, isEven }: { match: MatchType; isEven: boolean }) {
                 match.startTime,
                 match.id
             );
-            // console.log(resp.data);
             setVideoId(resp.data);
         }
     };

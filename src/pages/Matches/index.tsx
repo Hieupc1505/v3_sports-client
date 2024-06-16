@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { useStore } from "~/store/store";
-import { Box } from "@mui/material";
-// import InfiniteScroll from "react-infinite-scroll-component";
+import { Box, Grid, Skeleton } from "@mui/material";
+import MatchSkeleton from "./MatchSkeleton";
 import InfiniteScroll from "react-infinite-scroller";
 import { MatchType } from "~/types/sports.type";
 import sportApi from "~/api/sport.api";
@@ -125,7 +125,7 @@ const Matches = () => {
             ref={ref}
             id={"matches"}
         >
-            {/* {matches.length === 0 ? (
+            {matches.length === 0 ? (
                 <Container maxWidth="md">
                     <Box sx={{ bgcolor: "#171717", px: 2, py: 1 }}>
                         <Skeleton
@@ -142,81 +142,82 @@ const Matches = () => {
                         ))}
                     </Grid>
                 </Container>
-            ) : ( */}
-            <Container maxWidth="md">
-                <InfiniteScroll
-                    pageStart={0}
-                    loadMore={fetchPreviousData}
-                    hasMore={hasMore}
-                    isReverse={true}
-                    getScrollParent={() => ref.current}
-                    threshold={10}
-                    loader={
+            ) : (
+                <Container maxWidth="md">
+                    <InfiniteScroll
+                        pageStart={0}
+                        loadMore={fetchPreviousData}
+                        hasMore={hasMore}
+                        isReverse={true}
+                        getScrollParent={() => ref.current}
+                        threshold={10}
+                        loader={
+                            <Box
+                                key={v4()}
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <CircularProgress />
+                            </Box>
+                        }
+                        useWindow={false}
+                    >
+                        <HasMorePre />
+                        {matches.length &&
+                            matches.map((match, index) => {
+                                return (
+                                    <Match
+                                        isRoundNow={
+                                            matches.length === 2 && index === 1
+                                        }
+                                        matches={match}
+                                        round={rounds[index]}
+                                        key={index}
+                                        total={totalRound}
+                                    />
+                                );
+                            })}
+                    </InfiniteScroll>
+                    <Box>
+                        {nexts.length
+                            ? nexts.map((match, index) => {
+                                  return (
+                                      <Match
+                                          isRoundNow={false}
+                                          matches={match}
+                                          round={currentRound + index + 1}
+                                          key={index}
+                                          lastItemRef={
+                                              index === nexts.length - 1
+                                                  ? lastItemRef
+                                                  : undefined
+                                          }
+                                          total={totalRound}
+                                      />
+                                  );
+                              })
+                            : ""}
+                    </Box>
+                    {!nexts.length ||
+                    rounds[rounds.length - 1] + 1 < totalRound ? (
                         <Box
-                            key={v4()}
                             sx={{
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
                             }}
+                            ref={lastItemRef}
                         >
                             <CircularProgress />
                         </Box>
-                    }
-                    useWindow={false}
-                >
-                    <HasMorePre />
-                    {matches.length &&
-                        matches.map((match, index) => {
-                            return (
-                                <Match
-                                    isRoundNow={
-                                        matches.length === 2 && index === 1
-                                    }
-                                    matches={match}
-                                    round={rounds[index]}
-                                    key={index}
-                                    total={totalRound}
-                                />
-                            );
-                        })}
-                </InfiniteScroll>
-                <Box>
-                    {nexts.length
-                        ? nexts.map((match, index) => {
-                              return (
-                                  <Match
-                                      isRoundNow={false}
-                                      matches={match}
-                                      round={currentRound + index + 1}
-                                      key={index}
-                                      lastItemRef={
-                                          index === nexts.length - 1
-                                              ? lastItemRef
-                                              : undefined
-                                      }
-                                      total={totalRound}
-                                  />
-                              );
-                          })
-                        : ""}
-                </Box>
-                {!nexts.length || rounds[rounds.length - 1] + 1 < totalRound ? (
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
-                        ref={lastItemRef}
-                    >
-                        <CircularProgress />
-                    </Box>
-                ) : (
-                    ""
-                )}
-            </Container>
-            {/* )} */}
+                    ) : (
+                        ""
+                    )}
+                </Container>
+            )}
         </Box>
     );
 };

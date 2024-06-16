@@ -1,5 +1,4 @@
 import axios from "axios";
-console.log(import.meta.env); // "123"
 export const axiosInstance = axios.create({
     baseURL: import.meta.env.PROD
         ? import.meta.env.VITE_SERVER_PROD
