@@ -1,8 +1,5 @@
-import React from "react";
 import ReactPlayer from "react-player/youtube";
-// import CircularProgress from "@mui/material/CircularProgress";
 
-// import { list as nations } from "../../../GlobelStyles/type";
 const VideoPlay = ({ url }: { url: string }) => {
     //https://developers.google.com/youtube/iframe_api_reference?hl=vi#Events
 

@@ -3,7 +3,7 @@ import { Typography } from "@mui/material";
 export default function Show({ arr }: { arr: unknown[] }) {
     return (
         <div style={{ display: "flex" }}>
-            {arr.map((it, em) => (
+            {arr.map((_it, em) => (
                 <Typography key={em}>{em} - </Typography>
             ))}
         </div>

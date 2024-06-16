@@ -17,6 +17,7 @@ type LeagueActions = {
         seasons: SeasonType[],
         rounds: roundsType
     ) => void;
+    changeStatusLoading: (status?: boolean) => void;
 };
 
 export type LeagueSlice = LeagueState & LeagueActions;
