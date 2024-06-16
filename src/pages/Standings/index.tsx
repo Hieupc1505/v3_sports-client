@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Box, Container } from "@mui/material";
 
 import Title from "./Title";

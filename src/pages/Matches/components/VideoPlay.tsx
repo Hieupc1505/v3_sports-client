@@ -22,4 +22,4 @@ const VideoPlay = ({ url }: { url: string }) => {
     );
 };
 
-export default React.memo(VideoPlay);
+export default VideoPlay;

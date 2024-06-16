@@ -91,7 +91,7 @@ function MatchItem({ match, isEven }: { match: MatchType; isEven: boolean }) {
     };
     const handleOpen = async () => {
         setOpen(true);
-        if (!videoId) {
+        if (!videoId && league) {
             const resp = await sportApi.getHighLight(
                 league.id,
                 match.slug,

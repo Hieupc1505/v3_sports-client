@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
@@ -278,7 +276,7 @@ const TableCellHeader = styled(TableCell)(({ theme }) => ({
     },
 }));
 
-export const renderColor = (idx: number, length: number) => {
+const renderColor = (idx: number, length: number) => {
     const sx = ["#4285f4", "rgb(250,123,23)", "red", "#202124"];
     switch (idx) {
         case 0:

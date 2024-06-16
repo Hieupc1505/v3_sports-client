@@ -1,5 +1,5 @@
 import { Container } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { useStore } from "~/store/store";
@@ -16,8 +16,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 const Matches = () => {
     const { currentRound, totalRound, leagueId, seasonId, loading } = useStore(
         useShallow((state) => ({
-            currentRound: state.rounds?.currentRound,
-            totalRound: state?.rounds?.totalRound,
+            currentRound: state.rounds?.currentRound || 0,
+            totalRound: state?.rounds?.totalRound || 0,
             leagueId: state.league?.id,
             seasonId: state.active,
             loading: state.isLoading,
@@ -57,7 +57,7 @@ const Matches = () => {
 
     const fetchPreviousData = async () => {
         const round = rounds[0] - 1;
-        if (round > 0 && !rounds.includes(round)) {
+        if (round > 0 && !rounds.includes(round) && leagueId && seasonId) {
             const match = await sportApi.getMatchByRound(
                 leagueId,
                 seasonId,
@@ -71,7 +71,13 @@ const Matches = () => {
     const fetchNextData = async () => {
         const round = rounds[rounds.length - 1] + 1;
 
-        if (round <= totalRound && !rounds.includes(round)) {
+        if (
+            totalRound &&
+            leagueId &&
+            seasonId &&
+            round <= totalRound &&
+            !rounds.includes(round)
+        ) {
             const match = await sportApi.getMatchByRound(
                 leagueId,
                 seasonId,

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from "react";
-import { Box, Grid, styled, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import MatchItem from "./MatchItem";
 import { MatchType } from "~/types/sports.type";
 const Match = ({

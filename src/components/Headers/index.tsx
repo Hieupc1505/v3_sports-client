@@ -42,7 +42,7 @@ const Header = () => {
         event: React.MouseEvent<HTMLElement>,
         newAlignment: string
     ) => {
-        console.log(newAlignment);
+        console.log(event.target);
         setAlignment(newAlignment);
         navigate(`/${newAlignment}`);
     };
