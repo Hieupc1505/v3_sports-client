@@ -14,17 +14,14 @@ import {
     Avatar,
     Typography,
     Container,
-    Skeleton,
+    IconButton,
+    // Skeleton,
 } from "@mui/material";
 import sportApi from "~/api/sport.api";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const Header = () => {
     const navigate = useNavigate();
-    const MenuBox = styled(Box)(({ theme }) => ({
-        display: "flex",
-        alignItems: "center",
-        padding: theme.spacing(2),
-    }));
 
     const { name, logo, country, changeLeague, hasLeague } = useStore(
         useShallow((state) => ({
@@ -36,6 +33,11 @@ const Header = () => {
             hasLeague: state.league,
         }))
     );
+    const MenuBox = styled(Box)(({ theme }) => ({
+        display: "flex",
+        alignItems: "center",
+        padding: theme.spacing(2),
+    }));
     const [alignment, setAlignment] = React.useState("");
 
     const handleChange = (
@@ -66,15 +68,12 @@ const Header = () => {
         };
         fetchData();
     });
-
     return (
         <Box>
             <Box sx={{ flexGrow: 1 }}>
-                {getList.isLoading ? (
-                    <Skeleton variant="rectangular" width="100%" height={144} />
-                ) : (
-                    <AppBarCustom id={country}>
-                        <Toolbar>
+                <AppBarCustom id={country}>
+                    <Toolbar>
+                        {logo ? (
                             <Avatar
                                 variant="square"
                                 sx={{
@@ -85,55 +84,65 @@ const Header = () => {
                                 src={logo}
                                 alt="logo"
                             />
+                        ) : (
+                            <Avatar src="/icon.png" alt="league" />
+                        )}
 
-                            <Typography
-                                variant="h6"
-                                component="div"
-                                sx={{ flexGrow: 1 }}
-                            >
-                                {name}
-                            </Typography>
-                            <MenuBox>
-                                {getList.data ? (
-                                    <ListLeague data={getList.data?.data} />
-                                ) : null}
-                            </MenuBox>
-                        </Toolbar>
-                        <Container
-                            maxWidth="lg"
-                            sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                mt: 2,
-                            }}
+                        <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{ flexGrow: 1 }}
                         >
-                            <ToggleButtonGroup
-                                // color="primary"
-                                value={alignment}
-                                exclusive
-                                onChange={handleChange}
-                                aria-label="Platform"
-                                fullWidth={true}
-                            >
-                                <ToggleButtonCustom value="">
-                                    Trận Đấu
-                                </ToggleButtonCustom>
-                                <ToggleButtonCustom value="standings">
-                                    Bảng Xếp Hạng
-                                </ToggleButtonCustom>
-                                <ToggleButtonCustom
-                                    disabled
-                                    value="statistical"
+                            {name}
+                        </Typography>
+                        <MenuBox>
+                            {getList.data ? (
+                                <ListLeague data={getList.data?.data} />
+                            ) : (
+                                <IconButton
+                                    aria-label="more"
+                                    id="long-button-default"
+                                    aria-haspopup="true"
                                 >
-                                    Thống Kê
-                                </ToggleButtonCustom>
-                                <ToggleButtonCustom disabled value="live">
-                                    Trực Tiếp
-                                </ToggleButtonCustom>
-                            </ToggleButtonGroup>
-                        </Container>
-                    </AppBarCustom>
-                )}
+                                    <MenuIcon
+                                        fontSize="large"
+                                        sx={{ color: "#fff" }}
+                                    />
+                                </IconButton>
+                            )}
+                        </MenuBox>
+                    </Toolbar>
+                    <Container
+                        maxWidth="lg"
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            mt: 2,
+                        }}
+                    >
+                        <ToggleButtonGroup
+                            // color="primary"
+                            value={alignment}
+                            exclusive
+                            onChange={handleChange}
+                            aria-label="Platform"
+                            fullWidth={true}
+                        >
+                            <ToggleButtonCustom value="">
+                                Trận Đấu
+                            </ToggleButtonCustom>
+                            <ToggleButtonCustom value="standings">
+                                Bảng Xếp Hạng
+                            </ToggleButtonCustom>
+                            <ToggleButtonCustom disabled value="statistical">
+                                Thống Kê
+                            </ToggleButtonCustom>
+                            <ToggleButtonCustom disabled value="live">
+                                Trực Tiếp
+                            </ToggleButtonCustom>
+                        </ToggleButtonGroup>
+                    </Container>
+                </AppBarCustom>
             </Box>
         </Box>
     );

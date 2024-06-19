@@ -121,6 +121,7 @@ const Matches = () => {
                 height: "calc(100vh - 145px)",
                 overflow: "auto",
                 backgroundColor: "#202124",
+                // minHeight: "145px",
             }}
             ref={ref}
             id={"matches"}
