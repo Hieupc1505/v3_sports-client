@@ -8,6 +8,7 @@ export interface LeagueType {
     list2?: string;
     logo: string;
     channelId: string;
+    isGroup: boolean;
 }
 
 export interface SeasonType {
@@ -47,6 +48,7 @@ export interface HighLightType {
 }
 
 export interface MatchType {
+    _id: string;
     id: number;
     round: number;
     home_team_id: TeamType;
@@ -111,4 +113,19 @@ export interface fiveMatchType {
 export interface resHighLightType {
     success: boolean;
     data: string;
+}
+export interface resKnockoutType {
+    success: boolean;
+    data: KnockoutType[];
+}
+
+export interface KnockoutType {
+    _id: string;
+    round_name: string;
+    match_id: MatchType;
+    match_parent: string;
+    match_left: number;
+    match_right: number;
+    round_id: number;
+    next_round: string;
 }
