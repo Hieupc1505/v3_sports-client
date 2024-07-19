@@ -90,23 +90,6 @@ const Matches = () => {
 
     const lastItemRef = useIntersectionObserver(fetchNextData, [true]);
 
-    useEffect(() => {
-        const anchor = document.querySelector("#round_now");
-
-        if (
-            anchor &&
-            matches.length === 2 &&
-            ref.current &&
-            (currentRound !== 1 || currentRound !== totalRound)
-        ) {
-            const rect = anchor.getBoundingClientRect();
-            const scrollTop =
-                window.pageYOffset || document.documentElement.scrollTop;
-            const topPosition = rect.top + scrollTop;
-            (ref.current as HTMLElement).scrollBy({ top: topPosition - 146 });
-        }
-    }, [matches.length]);
-
     const HasMorePre = () => {
         // if (rounds[0] !== 1)
         //     return <Box id={"changeHasMore"} ref={changeHasMore}></Box>;

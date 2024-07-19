@@ -8,6 +8,7 @@ type LeagueState = {
     rounds?: roundsType;
     active?: number;
     isLoading: boolean;
+    isGroup?: boolean;
 };
 
 type LeagueActions = {

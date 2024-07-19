@@ -7,6 +7,7 @@ import {
     resListLeagueReqType,
     resStandingType,
     resHighLightType,
+    resKnockoutType,
 } from "~/types/sports.type";
 import { axiosInstance } from "~/services/fetcher";
 
@@ -63,6 +64,24 @@ const sportApi = {
                 id,
             })
             .then((res) => res.data);
+    },
+    getKnockoutMatch: async (
+        leagueId: number,
+        seasonId: number,
+        parentknockoutId?: string
+    ) => {
+        return axiosInstance.get<resKnockoutType>(
+            `/api/v1/sports/knockout/cup?leagueId=${leagueId}&seasonId=${seasonId}${
+                parentknockoutId ? `parentKnockoutId=${parentknockoutId}` : ""
+            }`
+        );
+    },
+    getMatchInfoById: async (id: string) => {
+        const { data } = await axiosInstance.get<resMatchReqType>(
+            `/api/v1/sports/match/${id}`
+        );
+        if (data.success) return data.data;
+        return null;
     },
 };
 
