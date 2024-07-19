@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, Container, Typography, styled } from "@mui/material";
 import BranchMatchItem from "./components/BranchMatchItem";
-import { MatchType } from "~/types/sports.type";
+
 import { KnockoutType } from "~/types/sports.type";
 import { useEffect, useState } from "react";
 import sportApi from "~/api/sport.api";
 import { useShallow } from "zustand/react/shallow";
 
 import { useStore } from "~/store/store";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const BranchMatch = () => {
     const [matches, setMatch] = useState<KnockoutType[]>([]);
     const navigate = useNavigate();

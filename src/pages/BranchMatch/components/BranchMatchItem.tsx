@@ -1,22 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { MatchType } from "~/types/sports.type";
-import { Avatar, Box, Button, styled, Typography } from "@mui/material";
+import { Avatar, Box, styled, Typography } from "@mui/material";
 import sportApi from "~/api/sport.api";
-// {
-//     home_team_id,
-//     away_team_id,
-//     home_team_score,
-//     away_team_score,
-//     status,
-//     startTime,
-// }: MatchType
-interface DataType {
-    data: {
-        club1: string;
-        club2: string;
-    };
-}
+
 const BranchMatchItem = ({ match_id }: { match_id: MatchType }) => {
     const { _id } = match_id;
 
