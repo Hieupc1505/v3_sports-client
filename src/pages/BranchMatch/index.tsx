@@ -1,17 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, Container, Typography, styled } from "@mui/material";
 import BranchMatchItem from "./components/BranchMatchItem";
-
-import { KnockoutType } from "~/types/sports.type";
+import { PlayoffType } from "~/types/sport.v2.type";
 import { useEffect, useState } from "react";
 import sportApi from "~/api/sport.api";
 import { useShallow } from "zustand/react/shallow";
 
 import { useStore } from "~/store/store";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 const BranchMatch = () => {
-    const [matches, setMatch] = useState<KnockoutType[]>([]);
-    const navigate = useNavigate();
+    const [playoffs, setPlayoff] = useState<PlayoffType[]>([]);
+    // const navigate = useNavigate();
     const BoxRoundMatch = styled(Box)(() => ({
         flex: "1 0 0 ",
         textAlign: "center",
@@ -25,7 +23,7 @@ const BranchMatch = () => {
     }));
 
     const BoxSingleItem = styled(Box)(() => ({
-        width: matches?.length === 15 ? "216px" : "288px",
+        width: playoffs?.length === 15 ? "216px" : "288px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-around",
@@ -54,7 +52,7 @@ const BranchMatch = () => {
     const { leagueId, seasonId, leagueName } = useStore(
         useShallow((state) => ({
             leagueId: state.league?.id,
-            seasonId: state.active,
+            seasonId: state.season?.id,
             leagueName: state.league?.name,
         }))
     );
@@ -67,23 +65,21 @@ const BranchMatch = () => {
                     seasonId
                 );
 
-                if (data.success && data.data.length) setMatch(data.data);
-
-                navigate("/");
+                if (data.metadata.length) setPlayoff(data.metadata);
+                else {
+                    setPlayoff([]);
+                }
             }
         };
         fetchData();
-    }, [leagueId]);
+    }, [leagueId, seasonId]);
+    const finlnalRoundId = 29;
+    const matchFinal = playoffs.filter((item) => item.round === finlnalRoundId);
 
-    const matchFinal = matches.filter((item) => item.round_name === "final");
-
-    const renderMatch = ({ match_id, _id, round_id }: KnockoutType) => {
-        let arrMatchChild = matches.filter((item) => item.match_parent === _id);
-
-        if (round_id === 5)
-            arrMatchChild = arrMatchChild.sort(
-                (a, b) => -b.match_id?.startTime + a.match_id?.startTime
-            );
+    const renderMatch = ({ matches, _id }: PlayoffType) => {
+        const arrMatchChild = playoffs.filter(
+            (item) => item.playoff_parent === _id
+        );
 
         return (
             <Box key={_id} sx={{ display: "flex" }}>
@@ -96,14 +92,14 @@ const BranchMatch = () => {
                 )}
                 <BoxSingleItem>
                     <BoxItem>
-                        <BranchMatchItem match_id={match_id} />
+                        <BranchMatchItem matches={matches} />
                     </BoxItem>
                 </BoxSingleItem>
             </Box>
         );
     };
 
-    const listTitleRound = handleCountRound[matches.length.toString()];
+    const listTitleRound = handleCountRound[playoffs.length.toString()];
 
     return (
         <Box

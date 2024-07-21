@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Box, Grid, Typography } from "@mui/material";
 import MatchItem from "./MatchItem";
-import { MatchType } from "~/types/sports.type";
+import { MatchType } from "~/types/sport.v2.type";
 const Match = ({
     isRoundNow,
     matches,
@@ -15,7 +14,6 @@ const Match = ({
     total: number;
     lastItemRef?: ((node: HTMLElement) => void) | undefined;
 }) => {
-    // console.log(matches);
     return (
         <Box id={isRoundNow ? "round_now" : ""}>
             <Box
