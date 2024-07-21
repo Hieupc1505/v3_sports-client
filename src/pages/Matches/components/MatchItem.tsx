@@ -6,7 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import CardContent from "@mui/material/CardContent";
 import convertMillisecondsToDate from "~/utils/matches";
 
-import { MatchType } from "~/types/sports.type";
+import { MatchType } from "~/types/sport.v2.type";
 import {
     Avatar,
     List,
@@ -25,23 +25,21 @@ import VideoPlay from "./VideoPlay";
 import sportApi from "~/api/sport.api";
 import CircularProgress from "@mui/material/CircularProgress";
 
-// import Button from '@mui/material/Button';
-
 function MatchItem({ match, isEven }: { match: MatchType; isEven: boolean }) {
-    // const theme = useTheme();
     const {
-        home_team_id,
-        away_team_id,
+        home_team,
+        away_team,
         home_team_score,
         away_team_score,
         highlight,
         status,
     } = match;
-    // console.log(highlight);
+
     const time = convertMillisecondsToDate(match.startTime * 1000);
-    const { league } = useStore(
+    const { thumbnail, season } = useStore(
         useShallow((state) => ({
-            league: state.league,
+            thumbnail: state.season?.image,
+            season: state?.season?.id,
         }))
     );
 
@@ -71,7 +69,6 @@ function MatchItem({ match, isEven }: { match: MatchType; isEven: boolean }) {
             backgroundColor: theme.palette.card.light,
             transition: "all 0.33s",
         },
-
         borderRadius: 0,
     }));
     const DividerCustom = styled(Divider)(({ theme }) => ({
@@ -82,40 +79,25 @@ function MatchItem({ match, isEven }: { match: MatchType; isEven: boolean }) {
     }));
 
     const [open, setOpen] = React.useState(false);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [videoId, setVideoId] = React.useState<string>(
-        match.highlight?.videoId || ""
+        highlight?.videoId || ""
     );
     const handleClose = () => {
         setOpen(false);
     };
     const handleOpen = async () => {
         setOpen(true);
-        if (!videoId && league) {
+        if (!highlight?.videoId && season) {
             const resp = await sportApi.getHighLight(
-                league.id,
+                season,
                 match.slug,
                 match.startTime,
                 match.id
             );
-            setVideoId(resp.data);
+
+            setVideoId(resp.metadata);
         }
     };
-
-    // useEffect(() => {
-    //     async function getHighLight() {
-    //         if (!match.highlight) {
-    //             const resp = await sportApi.getHighLight(
-    //                 league.id,
-    //                 match.slug,
-    //                 match.startTime,
-    //                 match.id
-    //             );
-    //             setVideoId(resp.data);
-    //         }
-    //     }
-    //     getHighLight();
-    // }, [match.highlght]);
 
     return (
         <CardCustom>
@@ -126,15 +108,15 @@ function MatchItem({ match, isEven }: { match: MatchType; isEven: boolean }) {
                             secondaryAction={
                                 <IconButton edge="end" aria-label="comments">
                                     <Typography variant="league">
-                                        {home_team_score}
+                                        {home_team_score.display}
                                     </Typography>
                                 </IconButton>
                             }
                         >
                             <ListItemAvatarCustom>
                                 <AvatarCustom
-                                    src={home_team_id.logo}
-                                    alt={home_team_id.shortName}
+                                    src={home_team.logo}
+                                    alt={home_team.shortName}
                                 />
                             </ListItemAvatarCustom>
                             <ListItemText
@@ -144,7 +126,7 @@ function MatchItem({ match, isEven }: { match: MatchType; isEven: boolean }) {
                                 }}
                             >
                                 <Typography variant="league">
-                                    {home_team_id.shortName}
+                                    {home_team.shortName}
                                 </Typography>
                             </ListItemText>
                         </ListItem>
@@ -152,20 +134,20 @@ function MatchItem({ match, isEven }: { match: MatchType; isEven: boolean }) {
                             secondaryAction={
                                 <IconButton edge="end" aria-label="comments">
                                     <Typography variant="league">
-                                        {away_team_score}
+                                        {away_team_score.display}
                                     </Typography>
                                 </IconButton>
                             }
                         >
                             <ListItemAvatarCustom>
                                 <AvatarCustom
-                                    src={away_team_id.logo}
-                                    alt={away_team_id.shortName}
+                                    src={away_team.logo}
+                                    alt={away_team.shortName}
                                 />
                             </ListItemAvatarCustom>
                             <ListItemText sx={{ fontSize: "1.4rem" }}>
                                 <Typography variant="league">
-                                    {away_team_id.shortName}
+                                    {away_team.shortName}
                                 </Typography>
                             </ListItemText>
                         </ListItem>
@@ -183,16 +165,17 @@ function MatchItem({ match, isEven }: { match: MatchType; isEven: boolean }) {
                     gap: 1,
                 }}
             >
-                {MatchIsEnd(match.startTime) === true && status === "100" ? (
+                {MatchIsEnd(match.startTime) === true && status.code >= 100 ? (
                     <>
                         <Typography variant="league">KT</Typography>
                         <Typography variant="league">
                             {time.day}/{time.month}
                         </Typography>
-                        {highlight ? (
+
+                        {videoId ? (
                             <Avatar
                                 onClick={handleOpen}
-                                src={`https://i.ytimg.com/vi/${highlight.videoId}/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLADKHNS5_XF51n-zYznTlcRpeQPwQ`}
+                                src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLADKHNS5_XF51n-zYznTlcRpeQPwQ`}
                                 alt="league"
                                 variant="square"
                                 sx={{
@@ -204,7 +187,7 @@ function MatchItem({ match, isEven }: { match: MatchType; isEven: boolean }) {
                         ) : (
                             <Avatar
                                 onClick={handleOpen}
-                                src={league?.image}
+                                src={thumbnail ?? ""}
                                 alt="league"
                                 variant="square"
                                 sx={{

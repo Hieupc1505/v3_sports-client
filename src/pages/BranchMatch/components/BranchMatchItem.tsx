@@ -1,21 +1,61 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from "react";
-import { MatchType } from "~/types/sports.type";
+import { useEffect, useState, memo } from "react";
+import { MatchType, TeamType, TeamScoreType } from "~/types/sport.v2.type";
 import { Avatar, Box, styled, Typography } from "@mui/material";
-import sportApi from "~/api/sport.api";
 
-const BranchMatchItem = ({ match_id }: { match_id: MatchType }) => {
-    const { _id } = match_id;
+const BranchMatchItem = ({ matches }: { matches: MatchType[] }) => {
+    const [homeTeam, setHomeTeam] = useState<TeamType>();
+    const [awayTeam, setAwayTeam] = useState<TeamType>();
+    const [homeTeamScore, setHomeTeamScore] = useState<TeamScoreType>();
+    const [awayTeamScore, setAwayTeamScore] = useState<TeamScoreType>();
 
-    const [matchInfo, setMatchInfo] = useState<MatchType | null>(null);
+    function sumScores(score1: TeamScoreType, score2: TeamScoreType) {
+        return {
+            current: score1.current + score2.current,
+            display: score1.display + score2.display,
+            period1: score1.period1 + score2.period1,
+            period2: score1.period2 + score2.period2,
+            normaltime: score1.normaltime + score2.normaltime,
+            extra1: (score1.extra1 ?? 0) + (score2.extra1 ?? 0),
+            extra2: (score1.extra2 ?? 0) + (score2.extra2 ?? 0),
+            overtime: (score1.overtime ?? 0) + (score2.overtime ?? 0),
+            penalties: (score1.penalties ?? 0) + (score2.penalties ?? 0),
+        };
+    }
+
+    function sumMatchScores(matches: MatchType[]) {
+        if (matches.length === 1) {
+            return {
+                homeTeam: matches[0].home_team,
+                awayTeam: matches[0].away_team,
+                home_team_score: matches[0].home_team_score,
+                away_team_score: matches[0].away_team_score,
+            };
+        }
+        const totalHomeTeamScore = sumScores(
+            matches[0].home_team_score,
+            matches[1].away_team_score
+        );
+        const totalAwayTeamScore = sumScores(
+            matches[0].away_team_score,
+            matches[1].home_team_score
+        );
+
+        return {
+            homeTeam: matches[0].home_team,
+            awayTeam: matches[0].away_team,
+            home_team_score: totalHomeTeamScore,
+            away_team_score: totalAwayTeamScore,
+        };
+    }
 
     useEffect(() => {
-        const fetchData = async () => {
-            const data = await sportApi.getMatchInfoById(_id);
-            if (data) setMatchInfo(data[0]);
-        };
-        fetchData();
-    }, [_id]);
+        const { home_team_score, away_team_score, homeTeam, awayTeam } =
+            sumMatchScores(matches);
+        setHomeTeamScore(() => home_team_score);
+        setAwayTeamScore(() => away_team_score);
+        setHomeTeam(() => homeTeam);
+        setAwayTeam(() => awayTeam);
+    }, [matches]);
 
     const BoxItem = styled(Box)(() => ({
         display: "flex",
@@ -35,10 +75,11 @@ const BranchMatchItem = ({ match_id }: { match_id: MatchType }) => {
             border: "2px solid rgba(255, 255, 255, 0.15)",
         },
     }));
+    console.log(homeTeam);
 
     return (
-        <Box className={_id}>
-            {matchInfo ? (
+        <Box>
+            {matches ? (
                 <BoxItem>
                     <Box
                         sx={{
@@ -46,7 +87,7 @@ const BranchMatchItem = ({ match_id }: { match_id: MatchType }) => {
                             alignItems: "center",
                             p: "12px",
                         }}
-                        className={matchInfo?.home_team_id?.slug}
+                        className={homeTeam?.shortName}
                     >
                         <Avatar
                             sx={{
@@ -55,15 +96,15 @@ const BranchMatchItem = ({ match_id }: { match_id: MatchType }) => {
                                 mr: "8px",
                             }}
                             alt="club"
-                            src={matchInfo?.home_team_id.logo ?? ""}
+                            src={homeTeam?.logo ?? ""}
                         />
                         <Typography variant="league" color={"white"}>
-                            {matchInfo?.home_team_id.shortName || "Waiting"}
+                            {homeTeam?.shortName || "Waiting"}
                         </Typography>
 
                         <Box sx={{ marginLeft: "auto" }}>
                             <Typography variant="league" color={"white"}>
-                                {matchInfo?.home_team_score}
+                                {homeTeamScore?.display}
                             </Typography>
                             {/* <Box component={'span'}>(4)</Box> */}
                         </Box>
@@ -75,7 +116,7 @@ const BranchMatchItem = ({ match_id }: { match_id: MatchType }) => {
                             alignItems: "center",
                             p: "12px",
                         }}
-                        className={matchInfo?.away_team_id?.slug}
+                        className={awayTeam?.shortName}
                     >
                         <Avatar
                             sx={{
@@ -84,15 +125,15 @@ const BranchMatchItem = ({ match_id }: { match_id: MatchType }) => {
                                 mr: "8px",
                             }}
                             alt="club"
-                            src={matchInfo?.away_team_id?.logo ?? ""}
+                            src={awayTeam?.logo ?? ""}
                             // src="https://res.cloudinary.com/develope-app/image/upload/v1718358015/Sports/leagues/riravunuyyfjdae5jm6g.png"
                         />
                         <Typography variant="league">
-                            {matchInfo?.away_team_id?.shortName || "Waiting"}
+                            {awayTeam?.shortName || "Waiting"}
                         </Typography>
                         <Box sx={{ marginLeft: "auto" }}>
                             <Typography variant="league">
-                                {matchInfo?.away_team_score ?? ""}
+                                {awayTeamScore?.display ?? ""}
                             </Typography>
                             {/* <Box component={'span'}>(4)</Box> */}
                         </Box>
@@ -105,4 +146,4 @@ const BranchMatchItem = ({ match_id }: { match_id: MatchType }) => {
     );
 };
 
-export default BranchMatchItem;
+export default memo(BranchMatchItem);

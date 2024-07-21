@@ -13,10 +13,10 @@ export default function Standings() {
     const { league, season } = useStore(
         useShallow((state) => ({
             league: state.league,
-            season: state.active,
+            season: state.season,
         }))
     );
-    const { data, isLoading } = useStanding(league?.id, season);
+    const { data, isLoading } = useStanding(league?.id, season?.id);
 
     return (
         <Box
@@ -94,13 +94,13 @@ export default function Standings() {
                     <Box>
                         <Title />
                     </Box>
-                    {data.data.groups.map((group) => {
+                    {data.metadata.groups.map((group) => {
                         return (
                             <TableGeneral
                                 key={v4()}
-                                isGroup={data.data.groups.length > 1}
+                                isGroup={league?.isGroup || false}
                                 rows={group.rows}
-                                fiveMatch={data.data.fiveMatch}
+                                fiveMatch={data.metadata.fiveMatch}
                                 name={group.name}
                             />
                         );
