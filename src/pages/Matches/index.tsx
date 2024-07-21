@@ -46,7 +46,7 @@ const Matches = () => {
                     seasonId,
                     currentRound
                 );
-                if (match.length) {
+                if (match?.length) {
                     setMatches(() => [match]);
                     setNexts(() => []);
                     setHasMore(true);
@@ -65,7 +65,7 @@ const Matches = () => {
                 seasonId,
                 round
             );
-            if (match.length) {
+            if (match?.length) {
                 setMatches([match, ...matches]);
                 setRounds([round, ...rounds]);
             }
@@ -87,7 +87,7 @@ const Matches = () => {
                 seasonId,
                 round
             );
-            if (match.length) {
+            if (match?.length) {
                 setNexts([...nexts, match]);
                 setRounds([...rounds, round]);
             }

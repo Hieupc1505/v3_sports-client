@@ -50,7 +50,6 @@ const Header = () => {
     };
 
     const getList = useListLeague();
-    console.log(getList.data);
 
     useEffect(() => {
         const fetchData = async () => {
