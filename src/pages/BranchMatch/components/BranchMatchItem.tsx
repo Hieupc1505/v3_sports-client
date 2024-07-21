@@ -75,7 +75,6 @@ const BranchMatchItem = ({ matches }: { matches: MatchType[] }) => {
             border: "2px solid rgba(255, 255, 255, 0.15)",
         },
     }));
-    console.log(homeTeam);
 
     return (
         <Box>
