@@ -17,7 +17,7 @@ const Matches = () => {
     const { currentRound, totalRound, leagueId, seasonId, loading } = useStore(
         useShallow((state) => ({
             currentRound: state.rounds?.currentRound.round || 0,
-            totalRound: state?.rounds?.rounds.length || 0,
+            totalRound: state?.rounds?.rounds?.length || 0,
             leagueId: state.league?.id,
             seasonId: state.season?.id,
             loading: state.isLoading,
