@@ -17,7 +17,7 @@ const Matches = () => {
     const { currentRound, totalRound, leagueId, seasonId, loading } = useStore(
         useShallow((state) => ({
             currentRound: state.rounds?.currentRound.round || 0,
-            totalRound: state?.rounds?.rounds.length || 0,
+            totalRound: state?.rounds?.rounds?.length || 0,
             leagueId: state.league?.id,
             seasonId: state.season?.id,
             loading: state.isLoading,
@@ -46,7 +46,7 @@ const Matches = () => {
                     seasonId,
                     currentRound
                 );
-                if (match.length) {
+                if (match?.length) {
                     setMatches(() => [match]);
                     setNexts(() => []);
                     setHasMore(true);
@@ -65,7 +65,7 @@ const Matches = () => {
                 seasonId,
                 round
             );
-            if (match.length) {
+            if (match?.length) {
                 setMatches([match, ...matches]);
                 setRounds([round, ...rounds]);
             }
@@ -87,7 +87,7 @@ const Matches = () => {
                 seasonId,
                 round
             );
-            if (match.length) {
+            if (match?.length) {
                 setNexts([...nexts, match]);
                 setRounds([...rounds, round]);
             }
