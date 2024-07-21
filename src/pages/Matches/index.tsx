@@ -6,7 +6,7 @@ import { useStore } from "~/store/store";
 import { Box, Grid, Skeleton } from "@mui/material";
 import MatchSkeleton from "./MatchSkeleton";
 import InfiniteScroll from "react-infinite-scroller";
-import { MatchType } from "~/types/sports.type";
+import { MatchType } from "~/types/sport.v2.type";
 import sportApi from "~/api/sport.api";
 import Match from "./components/Match";
 import useIntersectionObserver from "~/utils/useIntersection";
@@ -16,10 +16,10 @@ import CircularProgress from "@mui/material/CircularProgress";
 const Matches = () => {
     const { currentRound, totalRound, leagueId, seasonId, loading } = useStore(
         useShallow((state) => ({
-            currentRound: state.rounds?.currentRound || 0,
-            totalRound: state?.rounds?.totalRound || 0,
+            currentRound: state.rounds?.currentRound.round || 0,
+            totalRound: state?.rounds?.rounds.length || 0,
             leagueId: state.league?.id,
-            seasonId: state.active,
+            seasonId: state.season?.id,
             loading: state.isLoading,
         }))
     );
@@ -41,14 +41,16 @@ const Matches = () => {
     useEffect(() => {
         const fetchData = async () => {
             if (leagueId && seasonId && currentRound && !loading) {
-                const match = await sportApi.getMatchByRound(
+                const { metadata: match } = await sportApi.getMatchByRound(
                     leagueId,
                     seasonId,
                     currentRound
                 );
-                setMatches(() => [match.data]);
-                setNexts(() => []);
-                setHasMore(true);
+                if (match.length) {
+                    setMatches(() => [match]);
+                    setNexts(() => []);
+                    setHasMore(true);
+                }
             }
         };
         // setMatches([]);
@@ -58,13 +60,15 @@ const Matches = () => {
     const fetchPreviousData = async () => {
         const round = rounds[0] - 1;
         if (round > 0 && !rounds.includes(round) && leagueId && seasonId) {
-            const match = await sportApi.getMatchByRound(
+            const { metadata: match } = await sportApi.getMatchByRound(
                 leagueId,
                 seasonId,
                 round
             );
-            setMatches([match.data, ...matches]);
-            setRounds([round, ...rounds]);
+            if (match.length) {
+                setMatches([match, ...matches]);
+                setRounds([round, ...rounds]);
+            }
         } else setHasMore(false);
     };
 
@@ -78,13 +82,15 @@ const Matches = () => {
             round <= totalRound &&
             !rounds.includes(round)
         ) {
-            const match = await sportApi.getMatchByRound(
+            const { metadata: match } = await sportApi.getMatchByRound(
                 leagueId,
                 seasonId,
                 round
             );
-            setNexts([...nexts, match.data]);
-            setRounds([...rounds, round]);
+            if (match.length) {
+                setNexts([...nexts, match]);
+                setRounds([...rounds, round]);
+            }
         }
     };
 

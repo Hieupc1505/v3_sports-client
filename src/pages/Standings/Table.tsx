@@ -8,15 +8,15 @@ import { styled, TableBody, Typography, Box, Avatar } from "@mui/material";
 import Table from "@mui/material/Table";
 import { v4 as uuidv4 } from "uuid";
 import FiveMatchRecent from "./FiveMatchRecent";
-import { SpecificTeamType, fiveMatchType } from "~/types/sports.type";
+import { SpecificType, FiveMatchType } from "~/types/sport.v2.type";
 const TableGeneral = ({
     rows,
     fiveMatch,
     isGroup = false,
     name,
 }: {
-    rows: SpecificTeamType[];
-    fiveMatch: fiveMatchType;
+    rows: SpecificType[];
+    fiveMatch: FiveMatchType;
     isGroup: boolean;
     name: string;
 }) => {
@@ -106,7 +106,7 @@ const TableGeneral = ({
                                             {club.position}
                                         </Typography>
                                         <Avatar
-                                            src={club.team_id.logo}
+                                            src={club.team.logo}
                                             variant={"square"}
                                             sx={{
                                                 width: "24px",
@@ -120,7 +120,7 @@ const TableGeneral = ({
                                                 marginLeft: "5px",
                                             }}
                                         >
-                                            {club.team_id.name}
+                                            {club.team.shortName}
                                         </Typography>
                                     </Box>
                                 </TableCellCustom>
@@ -146,7 +146,11 @@ const TableGeneral = ({
                                     {
                                         <FiveMatchRecent
                                             key={uuidv4()}
-                                            result={fiveMatch[club.team_id._id]}
+                                            result={
+                                                fiveMatch[
+                                                    club.team.id.toString()
+                                                ]
+                                            }
                                         />
                                     }
                                 </TableCellCustom>

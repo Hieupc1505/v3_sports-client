@@ -7,14 +7,14 @@ import MenuIcon from "@mui/icons-material/Menu";
 // import { useListLeague } from "~/api/sport.api";
 import { useStore } from "~/store/store";
 import { useShallow } from "zustand/react/shallow";
-import { LeagueType } from "~/types/sports.type";
+import { TournamentInfoType } from "~/types/sport.v2.type";
 import { Avatar, ListItemIcon, ListItemText } from "@mui/material";
 // import { useLeague } from "~/api/sport.api";
 import sportApi from "~/api/sport.api";
 
 // const ITEM_HEIGHT = 48;
 
-export default function ListLeague({ data }: { data: LeagueType[] }) {
+export default function ListLeague({ data }: { data: TournamentInfoType[] }) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -33,15 +33,22 @@ export default function ListLeague({ data }: { data: LeagueType[] }) {
     const handleClose = async (id: number) => {
         if (typeof id === "number") {
             changeStatusLoading(true);
-            const seasons = await sportApi.getSeason(id);
+            // const seasons = await sportApi.getSeason(id);
+            const defaultSeasonIndex = 0;
             const newLeague = data.filter((league) => league.id === id)[0];
-            // console.log("newLeague", newLeague, seasons.data.rounds);
-            await changeLeague(
-                newLeague,
-                0,
-                seasons.data.seasons,
-                seasons.data.rounds
+            const { metadata: seasons } = await sportApi.listSeason(
+                newLeague.id
             );
+            const { metadata: seasonInfo } = await sportApi.getSeasonInfo(
+                newLeague.id,
+                seasons[defaultSeasonIndex].id
+            );
+            const { metadata: rounds } = await sportApi.rounds(
+                newLeague.id,
+                seasons[defaultSeasonIndex].id
+            );
+            // console.log("newLeague", newLeague, seasons.data.rounds);
+            await changeLeague(newLeague, seasonInfo, seasons, rounds);
         }
         setAnchorEl(null);
     };
