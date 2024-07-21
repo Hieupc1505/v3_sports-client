@@ -1,21 +1,27 @@
 import { StateCreator } from "zustand";
 
-import { SeasonType, LeagueType, roundsType } from "~/types/sports.type";
-type SelectedSeasonType = Pick<SeasonType, "id" | "name">;
+import {
+    TournamentInfoType,
+    SeasonInfoType,
+    SeasonItemType,
+    RoundInfoType,
+} from "~/types/sport.v2.type";
+
 type LeagueState = {
-    league?: LeagueType;
-    seasons?: SelectedSeasonType[];
-    rounds?: roundsType;
-    active?: number;
+    league?: TournamentInfoType;
+    seasons?: SeasonItemType[];
+    rounds?: RoundInfoType;
+    season?: SeasonInfoType;
     isLoading: boolean;
+    isGroup?: boolean;
 };
 
 type LeagueActions = {
     changeLeague: (
-        league: LeagueType,
-        selected: number,
-        seasons: SeasonType[],
-        rounds: roundsType
+        league: TournamentInfoType,
+        season: SeasonInfoType,
+        seasons: SeasonItemType[],
+        rounds: RoundInfoType
     ) => void;
     changeStatusLoading: (status?: boolean) => void;
 };
@@ -34,14 +40,14 @@ export const createLeagueSlice: StateCreator<
 > = (set) => ({
     ...initialState,
     changeLeague: (
-        league: LeagueType,
-        selected: number,
-        seasons: SeasonType[],
-        rounds: roundsType
+        league: TournamentInfoType,
+        season: SeasonInfoType,
+        seasons: SeasonItemType[],
+        rounds: RoundInfoType
     ) =>
         set(() => ({
             league: league,
-            active: seasons[selected].id,
+            season: season,
             seasons: seasons,
             rounds: rounds,
             isLoading: false,

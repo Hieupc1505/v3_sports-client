@@ -7,7 +7,8 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ListLeague from "./Lists";
 import { useListLeague } from "~/api/sport.api";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import {
     Box,
     styled,
@@ -19,11 +20,10 @@ import {
 } from "@mui/material";
 import sportApi from "~/api/sport.api";
 import MenuIcon from "@mui/icons-material/Menu";
-
 const Header = () => {
     const navigate = useNavigate();
-
-    const { name, logo, country, changeLeague, hasLeague } = useStore(
+    const location = useLocation();
+    const { name, logo, country, changeLeague, hasLeague, isGroup } = useStore(
         useShallow((state) => ({
             name: state.league?.name,
             logo: state.league?.logo,
@@ -31,6 +31,7 @@ const Header = () => {
             loading: state.isLoading,
             changeLeague: state.changeLeague,
             hasLeague: state.league,
+            isGroup: state.league?.isGroup,
         }))
     );
     const MenuBox = styled(Box)(({ theme }) => ({
@@ -41,33 +42,49 @@ const Header = () => {
     const [alignment, setAlignment] = React.useState("");
 
     const handleChange = (
-        event: React.MouseEvent<HTMLElement>,
+        _event: React.MouseEvent<HTMLElement>,
         newAlignment: string
     ) => {
-        console.log(event.target);
         setAlignment(newAlignment);
         navigate(`/${newAlignment}`);
     };
 
     const getList = useListLeague();
-    // console.log(getList.isLoading, getList.data);
+    console.log(getList.data);
 
     useEffect(() => {
         const fetchData = async () => {
             if (!getList.isLoading && getList.data && !hasLeague) {
-                const league = getList.data?.data[6];
-                const seasons = await sportApi.getSeason(league.id);
-                // console.log(league, seasons);
-                changeLeague(
-                    league,
-                    0,
-                    seasons.data.seasons,
-                    seasons.data.rounds
+                const defaultTournament = import.meta.env
+                    .VITE_SERVER_DEFAULT_TOURNAMENT;
+                const defaultSeasonIndex = 0;
+                const foundTour = getList.data.metadata.filter(
+                    (item) => item.id === defaultTournament
                 );
+                const tournament = foundTour.length
+                    ? foundTour[0]
+                    : getList.data.metadata[0];
+                const { metadata: seasons } = await sportApi.listSeason(
+                    tournament.id
+                );
+                const { metadata: seasonInfo } = await sportApi.getSeasonInfo(
+                    tournament.id,
+                    seasons[defaultSeasonIndex].id
+                );
+                const { metadata: rounds } = await sportApi.rounds(
+                    tournament.id,
+                    seasons[defaultSeasonIndex].id
+                );
+
+                changeLeague(tournament, seasonInfo, seasons, rounds);
             }
         };
         fetchData();
     });
+
+    useEffect(() => {
+        setAlignment(location.pathname.replace("/", ""));
+    }, [location.pathname]);
     return (
         <Box>
             <Box sx={{ flexGrow: 1 }}>
@@ -97,7 +114,7 @@ const Header = () => {
                         </Typography>
                         <MenuBox>
                             {getList.data ? (
-                                <ListLeague data={getList.data?.data} />
+                                <ListLeague data={getList.data?.metadata} />
                             ) : (
                                 <IconButton
                                     aria-label="more"
@@ -134,9 +151,15 @@ const Header = () => {
                             <ToggleButtonCustom value="standings">
                                 Bảng Xếp Hạng
                             </ToggleButtonCustom>
-                            <ToggleButtonCustom disabled value="statistical">
-                                Thống Kê
+                            <ToggleButtonCustom
+                                disabled={isGroup ? false : true}
+                                value="knockout"
+                            >
+                                Nhánh Đấu
                             </ToggleButtonCustom>
+                            {/* <ToggleButtonCustom disabled value="statistical">
+                                Thống Kê
+                            </ToggleButtonCustom> */}
                             <ToggleButtonCustom disabled value="live">
                                 Trực Tiếp
                             </ToggleButtonCustom>
