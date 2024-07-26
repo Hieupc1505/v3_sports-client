@@ -62,6 +62,12 @@ export interface GroupItemTypes {
 export interface FiveMatchType {
     [key: string]: number[];
 }
+
+export interface FiveMatchItemType {
+    result: number;
+    slug: string;
+}
+
 export interface StandingGroupType {
     groups: GroupItemTypes[];
     fiveMatch: FiveMatchType;
