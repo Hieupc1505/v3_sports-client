@@ -5,11 +5,12 @@ import {
     ResType,
     TournamentInfoType,
     SeasonInfoType,
-    StandingGroupType,
     SeasonItemType,
     RoundInfoType,
     MatchType,
     PlayoffType,
+    GroupItemTypes,
+    FiveMatchItemType,
 } from "~/types/sport.v2.type";
 import { axiosInstance } from "~/services/fetcher";
 
@@ -45,7 +46,7 @@ export function useLeague(id: number) {
 }
 
 export function useStanding(tournament?: number, season?: number) {
-    return useSWR<ResType<StandingGroupType>>(
+    return useSWR<ResType<GroupItemTypes[]>>(
         route.standings(tournament, season)
     );
 }
@@ -97,6 +98,15 @@ const sportApi = {
     getKnockoutMatch: async (leagueId: number, seasonId: number) => {
         return axiosInstance.get<ResType<PlayoffType[]>>(
             `/api/v1/football/${leagueId}/season/${seasonId}/playoff/v2`
+        );
+    },
+    getFiveMatchByTeam: async (
+        leagueId: number,
+        seasonId: number,
+        team: number
+    ) => {
+        return axiosInstance.get<ResType<FiveMatchItemType[]>>(
+            `/api/v1/football/${leagueId}/season/${seasonId}/match/recent/${team}`
         );
     },
     getMatchInfoById: async (id: string) => {

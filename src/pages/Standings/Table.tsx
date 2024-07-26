@@ -8,15 +8,15 @@ import { styled, TableBody, Typography, Box, Avatar } from "@mui/material";
 import Table from "@mui/material/Table";
 import { v4 as uuidv4 } from "uuid";
 import FiveMatchRecent from "./FiveMatchRecent";
-import { SpecificType, FiveMatchType } from "~/types/sport.v2.type";
+import { SpecificType } from "~/types/sport.v2.type";
 const TableGeneral = ({
     rows,
-    fiveMatch,
+    // fiveMatch,
     isGroup = false,
     name,
 }: {
     rows: SpecificType[];
-    fiveMatch: FiveMatchType;
+    // fiveMatch: FiveMatchType;
     isGroup: boolean;
     name: string;
 }) => {
@@ -73,7 +73,7 @@ const TableGeneral = ({
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((club, idx, arr) => {
+                    {rows.map((specs, idx, arr) => {
                         return (
                             <TableRow
                                 key={uuidv4()}
@@ -103,10 +103,10 @@ const TableGeneral = ({
                                             variant="league"
                                             sx={{ fontSize: "12px" }}
                                         >
-                                            {club.position}
+                                            {specs.position}
                                         </Typography>
                                         <Avatar
-                                            src={club.team.logo}
+                                            src={specs.team.logo}
                                             variant={"square"}
                                             sx={{
                                                 width: "24px",
@@ -120,37 +120,37 @@ const TableGeneral = ({
                                                 marginLeft: "5px",
                                             }}
                                         >
-                                            {club.team.shortName}
+                                            {specs.team.shortName}
                                         </Typography>
                                     </Box>
                                 </TableCellCustom>
                                 <TableCellCustom>
-                                    {club.matches}
+                                    {specs.matches}
                                 </TableCellCustom>
-                                <TableCellCustom>{club.wins}</TableCellCustom>
+                                <TableCellCustom>{specs.wins}</TableCellCustom>
                                 <TableCellCustom>
-                                    {club.matches - club.wins - club.losses}
-                                </TableCellCustom>
-                                <TableCellCustom>{club.losses}</TableCellCustom>
-                                <TableCellCustom>
-                                    {club.scoresFor}
+                                    {specs.matches - specs.wins - specs.losses}
                                 </TableCellCustom>
                                 <TableCellCustom>
-                                    {club.scoresAgainst}
+                                    {specs.losses}
                                 </TableCellCustom>
                                 <TableCellCustom>
-                                    {club.scoresFor - club.scoresAgainst}
+                                    {specs.scoresFor}
                                 </TableCellCustom>
-                                <TableCellCustom>{club.points}</TableCellCustom>
+                                <TableCellCustom>
+                                    {specs.scoresAgainst}
+                                </TableCellCustom>
+                                <TableCellCustom>
+                                    {specs.scoresFor - specs.scoresAgainst}
+                                </TableCellCustom>
+                                <TableCellCustom>
+                                    {specs.points}
+                                </TableCellCustom>
                                 <TableCellCustom>
                                     {
                                         <FiveMatchRecent
                                             key={uuidv4()}
-                                            result={
-                                                fiveMatch[
-                                                    club.team.id.toString()
-                                                ]
-                                            }
+                                            team={specs.team.id}
                                         />
                                     }
                                 </TableCellCustom>

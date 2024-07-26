@@ -94,13 +94,13 @@ export default function Standings() {
                     <Box>
                         <Title />
                     </Box>
-                    {data.metadata.groups.map((group) => {
+                    {data.metadata.map((group) => {
                         return (
                             <TableGeneral
                                 key={v4()}
                                 isGroup={league?.isGroup || false}
                                 rows={group.rows}
-                                fiveMatch={data.metadata.fiveMatch}
+                                // fiveMatch={data.metadata.fiveMatch}
                                 name={group.name}
                             />
                         );
